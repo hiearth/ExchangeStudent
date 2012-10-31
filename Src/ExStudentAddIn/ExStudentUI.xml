@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui">
+  <ribbon>
+    <tabs>
+      <tab id="ExStudent" label="ExStudent">
+        <group id="EmptyGroup" label="Empty Group">
+          <button id="EmptyGroupBtnEmpty" label="Empty Button" size="large" screentip="If you are bored, you can click on this button. You will find interesting."/>
+        </group>
+        <group id="MainGroup" label="Main Group">
+          <button id="MainGroupBtnGetResult" label="Get the Result"
+            size="large" onAction="DoAction" />
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

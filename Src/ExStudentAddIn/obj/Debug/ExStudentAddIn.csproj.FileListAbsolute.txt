@@ -1,0 +1,7 @@
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\obj\Debug\ExStudentAddIn.csproj.ResolveComReference.cache
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\bin\Debug\ExStudentAddIn.dll
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\bin\Debug\ExStudentAddIn.pdb
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\obj\Debug\ExStudentAddIn.dll
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\obj\Debug\ExStudentAddIn.pdb
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\bin\Debug\ExStudentAddIn.tlb
