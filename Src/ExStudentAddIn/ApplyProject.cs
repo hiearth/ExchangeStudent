@@ -9,6 +9,13 @@ namespace ExStudentAddIn
     {
         private string _name;
         private int _maxCount;
+        private int _passCount;
+
+        public int PassCount
+        {
+            get { return _passCount; }
+            set { _passCount = value; }
+        }
 
         public ApplyProject(string name)
         {
@@ -18,7 +25,17 @@ namespace ExStudentAddIn
         public int MaxCount
         {
             get { return _maxCount; }
-            set { _maxCount = value; }
+            set
+            {
+                if (value < 0)
+                {
+                    _maxCount = 0;
+                }
+                else
+                {
+                    _maxCount = value;
+                }
+            }
         }
 
         public string Name

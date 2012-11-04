@@ -76,10 +76,10 @@ namespace ExStudentAddIn
             }
         }
 
-        private void DrawProjectsMaxCountUI(List<ApplyProject> projects)
+        private void DrawProjectsMaxCountUI(ApplyProject[] projects)
         {
             Point referLocation = lblApplyProjectInfoTip.Location;
-            for (int i = 0; i < projects.Count; i++)
+            for (int i = 0; i < projects.Length; i++)
             {
                 // 生成label和textbox
                 Label lbl = new Label();
@@ -87,6 +87,7 @@ namespace ExStudentAddIn
                 lbl.Location = new Point(referLocation.X, referLocation.Y + 8 + (8 + 15) * i);
 
                 TextBox txtProject = new TextBox();
+                txtProject.AccessibleName = "ProjectMaxCount";
                 txtProject.Location = new Point(lbl.Location.X + lbl.Size.Width + 5, lbl.Location.Y);
                 txtProject.TextChanged += new EventHandler(txtProject_TextChanged);
                 txtProject.Tag = projects[i];
@@ -173,15 +174,31 @@ namespace ExStudentAddIn
         {
             try
             {
-                Worksheet activeSheet = Globals.ExcelApp.ActiveSheet as Worksheet;
-                _sheetInfo = new SheetInfo(activeSheet);
-                int headRow = int.Parse(txtHeadRow.Text);
-                int projNameCol = SheetHelper.GetColumnNumber(txtProjectNameColumn.Text);
-                int studentIdCol = SheetHelper.GetColumnNumber(txtStudentIdColumn.Text);
-                int applySortCol = SheetHelper.GetColumnNumber(txtApplySortColumn.Text);
-                int studentAppliesCol = SheetHelper.GetColumnNumber(txtStudentApplyListColumn.Text);
-                _sheetInfo.ParseSheet(headRow, projNameCol, studentIdCol, applySortCol, studentAppliesCol);
-                //ParseSheet(int headRowNO,int projNameCol,int studentIdCol,int applySortCol,int studentAppliesCol)
+                if (panelSheetInfo.Visible)
+                {
+                    CaculateSheetInfo();
+
+                    DrawProjectsMaxCountUI(_sheetInfo.Projects);
+
+                    btnPrevious.Visible = true;
+                    panelApplyProjectInfo.Visible = true;
+                    panelSheetInfo.Visible = false;
+                    panelResultInfo.Visible = false;
+                }
+                else if (panelApplyProjectInfo.Visible)
+                {
+                    CaculateApplyProjectInfo();
+
+                    panelResultInfo.Visible = true;
+                    panelSheetInfo.Visible = false;
+                    panelApplyProjectInfo.Visible = false;
+                }
+                else if (panelResultInfo.Visible)
+                {
+                    CaculateResultInfo();
+
+
+                }
             }
             catch (Exception exception)
             {
@@ -189,14 +206,61 @@ namespace ExStudentAddIn
             }
         }
 
+        private void CaculateResultInfo()
+        {
+            _sheetInfo.GenerateFilterResult();
+        }
+
+        private void CaculateApplyProjectInfo()
+        {
+            foreach (Control ctl in panelApplyProjectInfo.Controls)
+            {
+                if (ctl.AccessibleName == "ProjectMaxCount")
+                {
+                    TextBox txtProjectMaxCount = ctl as TextBox;
+                    if (txtProjectMaxCount != null)
+                    {
+                        ApplyProject project = txtProjectMaxCount.Tag as ApplyProject;
+                        if (project != null)
+                        {
+                            project.MaxCount = int.Parse(txtProjectMaxCount.Text);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CaculateSheetInfo()
+        {
+            Worksheet activeSheet = Globals.ExcelApp.ActiveSheet as Worksheet;
+            _sheetInfo = new SheetInfo(activeSheet);
+            int headRow = int.Parse(txtHeadRow.Text);
+            int projNameCol = SheetHelper.GetColumnNumber(txtProjectNameColumn.Text);
+            int studentIdCol = SheetHelper.GetColumnNumber(txtStudentIdColumn.Text);
+            int applySortCol = SheetHelper.GetColumnNumber(txtApplySortColumn.Text);
+            int studentAppliesCol = SheetHelper.GetColumnNumber(txtStudentApplyListColumn.Text);
+            _sheetInfo.ParseSheet(headRow, projNameCol, studentIdCol, applySortCol, studentAppliesCol);
+        }
+
         private void btnPrevious_Click(object sender, EventArgs e)
         {
-
+            if (panelApplyProjectInfo.Visible)
+            {
+                panelSheetInfo.Visible = true;
+                panelApplyProjectInfo.Visible = false;
+                panelResultInfo.Visible = false;
+            }
+            else if (panelResultInfo.Visible)
+            {
+                panelApplyProjectInfo.Visible = true;
+                panelSheetInfo.Visible = false;
+                panelResultInfo.Visible = false;
+            }
         }
 
         private void btnFinish_Click(object sender, EventArgs e)
         {
-
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }
     }
 }
