@@ -5,3 +5,6 @@ E:\Projects\ExchangeStudent\Src\ExStudentAddIn\bin\Debug\ExStudentAddIn.pdb
 E:\Projects\ExchangeStudent\Src\ExStudentAddIn\obj\Debug\ExStudentAddIn.dll
 E:\Projects\ExchangeStudent\Src\ExStudentAddIn\obj\Debug\ExStudentAddIn.pdb
 E:\Projects\ExchangeStudent\Src\ExStudentAddIn\bin\Debug\ExStudentAddIn.tlb
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\obj\Debug\ExStudentAddIn.SheetInfoCheck.resources
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\obj\Debug\GenerateResource.read.1.tlog
+E:\Projects\ExchangeStudent\Src\ExStudentAddIn\obj\Debug\GenerateResource.write.1.tlog

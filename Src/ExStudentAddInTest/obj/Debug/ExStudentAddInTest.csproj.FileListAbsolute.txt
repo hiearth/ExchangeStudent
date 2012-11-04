@@ -1,0 +1,8 @@
+E:\Projects\ExchangeStudent\Src\ExStudentAddInTest\bin\Debug\ExStudentAddInTest.dll
+E:\Projects\ExchangeStudent\Src\ExStudentAddInTest\bin\Debug\ExStudentAddInTest.pdb
+E:\Projects\ExchangeStudent\Src\ExStudentAddInTest\bin\Debug\ExStudentAddIn.dll
+E:\Projects\ExchangeStudent\Src\ExStudentAddInTest\bin\Debug\nunit.framework.dll
+E:\Projects\ExchangeStudent\Src\ExStudentAddInTest\bin\Debug\ExStudentAddIn.pdb
+E:\Projects\ExchangeStudent\Src\ExStudentAddInTest\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\ExchangeStudent\Src\ExStudentAddInTest\obj\Debug\ExStudentAddInTest.dll
+E:\Projects\ExchangeStudent\Src\ExStudentAddInTest\obj\Debug\ExStudentAddInTest.pdb

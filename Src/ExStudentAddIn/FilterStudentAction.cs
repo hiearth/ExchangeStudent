@@ -13,13 +13,14 @@ namespace ExStudentAddIn
         {
             try
             {
-                Worksheet activeSheet = Globals.ExcelApp.ActiveSheet as Worksheet;
-                int columnCount = activeSheet.UsedRange.Columns.Count;
-                Range firstRow = activeSheet.Rows[1];
-                for (int colIndex = 1; colIndex <= columnCount; colIndex++)
+                using (Form sheetInfoForm = new SheetInfoCheck())
                 {
-                    Range cell = firstRow.Cells[colIndex];
-                    string cellContent = cell.Text;
+                    sheetInfoForm.StartPosition = FormStartPosition.CenterParent;
+                    DialogResult dialogResult = sheetInfoForm.ShowDialog();
+                    if (dialogResult == DialogResult.OK || dialogResult == DialogResult.Yes)
+                    {
+
+                    }
                 }
             }
             catch (Exception e)

@@ -59,6 +59,7 @@
       <HintPath>System.Data.dll</HintPath>
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML">
       <HintPath>System.XML.dll</HintPath>
@@ -72,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="ActionAttribute.cs" />
+    <Compile Include="ApplyProject.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -79,9 +81,20 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="EmptyAction.cs" />
+    <Compile Include="ExchangeApply.cs" />
     <Compile Include="FilterStudentAction.cs" />
     <Compile Include="Globals.cs" />
+    <Compile Include="HeadRowInfo.cs" />
     <Compile Include="IRibbonControl.cs" />
+    <Compile Include="SheetHelper.cs" />
+    <Compile Include="SheetInfo.cs" />
+    <Compile Include="SheetInfoCheck.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SheetInfoCheck.Designer.cs">
+      <DependentUpon>SheetInfoCheck.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Student.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
@@ -97,6 +110,9 @@
   <ItemGroup>
     <EmbeddedResource Include="ExStudentUI.xml">
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SheetInfoCheck.resx">
+      <DependentUpon>SheetInfoCheck.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
