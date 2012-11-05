@@ -14,7 +14,16 @@ namespace ExStudentAddIn
         public bool Pass
         {
             get { return _pass; }
-            set { _pass = value; }
+            set
+            {
+                _pass = value;
+                UpdateStudentStatus();
+            }
+        }
+
+        private void UpdateStudentStatus()
+        {
+            _ownerStudnet.ApprovedProject = _pass ? _project : null;
         }
 
         public ExchangeApply(ApplyProject project, Student student)

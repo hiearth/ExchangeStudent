@@ -10,6 +10,13 @@ namespace ExStudentAddIn
         private string _appliesColumn;
         private string _applySortColumn;
         private IDictionary<string, string> _studentInfo;
+        private ApplyProject _approvedProject;
+        
+        public ApplyProject ApprovedProject
+        {
+            get { return _approvedProject; }
+            set { _approvedProject = value; }
+        }
 
         public string AppliesColumn
         {

@@ -34,32 +34,194 @@ namespace ExStudentAddIn
             // 然后在各项目的剩余名额范围内判断第二志愿的申请项（依旧是100%原则）
             // 如果符合要求，将此申请设置为通过
 
-            Dictionary<ApplyProject, List< ExchangeApply>> projectGroups = new Dictionary<ApplyProject, List<ExchangeApply>>();
-            foreach (ExchangeApply apply in ExchangeApplies)
+            var projectGroups = GetSortedProjectGroup();
+            TestGetSortedProjectGroup(projectGroups);
+
+            var studentGroups = GetSortedStudentGroup();
+            TestGetSortedStudentGroup(studentGroups);
+
+            bool someStudentApproved = false;
+            int approvedCount = 0;
+            do
             {
-                List<ExchangeApply> applies = null;
-                if (!projectGroups.TryGetValue(apply.Project, out applies))
+                // so complex, should use array, so we can change the group value
+                for (int groupIndex = 0; groupIndex < projectGroups.Count; groupIndex++)
                 {
-                    applies = new List<ExchangeApply>();
-                    projectGroups[apply.Project] = applies;
-                }
-                AppendBySort(applies,apply);
-            }
-            
-            foreach (var group in projectGroups)
-            {
-                int remainCount = group.Key.MaxCount - group.Key.PassCount;
-                for (int i = 0; i < remainCount; i++)
-                {
-                    if (group.Value[i].Priority == 1)
+                    var group = projectGroups[groupIndex];
+                    var project = group.Key;
+                    var applies = group.Value;
+                    int remainCount = project.MaxCount - project.PassCount;
+
+                    for (int applyIndex = remainCount - 1; applyIndex >= 0; applyIndex--)
                     {
-                        group.Value[i].Pass = true;
-                        group.Key.PassCount++;
+                        ExchangeApply apply = applies[applyIndex];
+                        if (apply.Priority == GetAvailableHighestPriority(studentGroups, apply.OwnerStudnet))
+                        {
+                            apply.Pass = true;
+                            project.PassCount++;
+                            someStudentApproved = true;
+                            approvedCount++;
+
+                            // update groups, project groups and student groups.
+                            UpdateStudentGroups(studentGroups, apply.OwnerStudnet);
+                            UpdateProjectGroups(projectGroups, apply.OwnerStudnet);
+                        }
+                    }
+                    if (someStudentApproved)
+                    {
+                        break;
+                    }
+                }
+            }
+            while (someStudentApproved);
+        }
+
+        private void UpdateStudentGroups(List<KeyValuePair<Student, List<ExchangeApply>>> studentGroups, Student approvedStudent)
+        {
+            for (int i = studentGroups.Count - 1; i >= 0; i--)
+            {
+                if (studentGroups[i].Key == approvedStudent)
+                {
+                    studentGroups.RemoveAt(i);
+                }
+            }
+        }
+
+        private void UpdateProjectGroups(List<KeyValuePair<ApplyProject, List<ExchangeApply>>> projectGroups, Student approvedStudent)
+        {
+            for (int projectIndex = projectGroups.Count - 1; projectIndex >= 0; projectIndex--)
+            {
+                List<ExchangeApply> applies = projectGroups[projectIndex].Value;
+                for (int applyIndex = applies.Count - 1; applyIndex >= 0; applyIndex--)
+                {
+                    if (applies[applyIndex].OwnerStudnet == approvedStudent)
+                    {
+                        applies.RemoveAt(applyIndex);
+                    }
+                }
+                if (applies.Count == 0)
+                {
+                    projectGroups.RemoveAt(projectIndex);
+                }
+            }
+        }
+
+        private int GetAvailableHighestPriority(List<KeyValuePair<Student, List<ExchangeApply>>> studentGroups,Student student)
+        {
+            foreach (var group in studentGroups)
+            {
+                if (group.Key == student)
+                {
+                    List<ExchangeApply> applies = group.Value;
+                    if (applies != null && applies.Count > 0)
+                    {
+                        return applies[0].Priority;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        private void TestGetSortedStudentGroup(List<KeyValuePair<Student, List<ExchangeApply>>> studentGroups)
+        {
+            foreach (var group in studentGroups)
+            {
+                var student = group.Key;
+                var applies = group.Value;
+                for (int i = 0; i < applies.Count - 1; i++)
+                {
+                    if (applies[i].Priority >= applies[i + 1].Priority)
+                    {
+                        throw new Exception("applies should sort by priority");
                     }
                 }
             }
         }
 
+        private List<KeyValuePair<Student, List<ExchangeApply>>> GetSortedStudentGroup()
+        {
+            var studentGroupsDict = new Dictionary<Student, List<ExchangeApply>>();
+            foreach (ExchangeApply apply in ExchangeApplies)
+            {
+                List<ExchangeApply> applies = null;
+                if (!studentGroupsDict.TryGetValue(apply.OwnerStudnet, out applies))
+                {
+                    applies = new List<ExchangeApply>();
+                    studentGroupsDict[apply.OwnerStudnet] = applies;
+                }
+                AppendByPriority(applies, apply);
+            }
+
+            var studentGroupsList = new List<KeyValuePair<Student, List<ExchangeApply>>>();
+            foreach (var group in studentGroupsDict)
+            {
+                studentGroupsList.Add(group);
+            }
+            return studentGroupsList;
+        }
+
+        private void AppendByPriority(List<ExchangeApply> applies, ExchangeApply apply)
+        {
+            if (applies.Count == 0 || applies[applies.Count - 1].Priority < apply.Priority)
+            {
+                applies.Add(apply);
+            }
+            else
+            {
+                int index = applies.Count - 2;
+                for (; index >= 0; index--)
+                {
+                    if (applies[index].Priority < apply.Priority)
+                    {
+                        applies.Insert(index + 1, apply);
+                    }
+                }
+                if (index < 0)
+                {
+                    applies.Insert(0, apply);
+                }
+            }
+        }
+
+        private void TestGetSortedProjectGroup(List<KeyValuePair<ApplyProject, List<ExchangeApply>>> projectGroups)
+        {
+            foreach (var group in projectGroups)
+            {
+                var project = group.Key;
+                var applies = group.Value;
+                for (int i = 0; i < applies.Count - 1; i++)
+                {
+                    if (applies[i].CompareTo(applies[i + 1]) < 0)
+                    {
+                        throw new Exception("applies should sort desc");
+                    }
+                }
+            }
+        }
+
+        private List<KeyValuePair<ApplyProject, List<ExchangeApply>>> GetSortedProjectGroup()
+        {
+            var projectGroupsDict = new Dictionary<ApplyProject, List<ExchangeApply>>();
+            foreach (ExchangeApply apply in ExchangeApplies)
+            {
+                List<ExchangeApply> applies = null;
+                if (!projectGroupsDict.TryGetValue(apply.Project, out applies))
+                {
+                    applies = new List<ExchangeApply>();
+                    projectGroupsDict[apply.Project] = applies;
+                }
+                AppendBySort(applies, apply);
+            }
+
+            var projectGroupsList = new List<KeyValuePair<ApplyProject, List<ExchangeApply>>>();
+            foreach (KeyValuePair<ApplyProject, List<ExchangeApply>> group in projectGroupsDict)
+            {
+                projectGroupsList.Add(group);
+            }
+            return projectGroupsList;
+        }
+
+        
         private void AppendBySort(List<ExchangeApply> applies, ExchangeApply apply)
         {   
             int index = applies.Count -1;
