@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Office.Interop.Excel;
 using System.Text;
 
 namespace ExStudentAddIn
@@ -48,13 +48,27 @@ namespace ExStudentAddIn
             return string.Empty;
         }
 
-        public static string TrimCellText(string cellText)
+        private static string TrimCellText(string cellText)
         {
             if (!string.IsNullOrEmpty(cellText))
             {
                 return cellText.Trim();
             }
             return string.Empty;
+        }
+
+        public static string GetCellText(Range cell)
+        {
+            string text = null;
+            if (cell != null)
+            {
+                text = cell.Text;
+                if (text.StartsWith("#"))
+                {
+                    text = cell.get_Value();
+                }
+            }
+            return TrimCellText(text);
         }
     }
 }

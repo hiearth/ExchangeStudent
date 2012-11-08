@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Worksheet = Microsoft.Office.Interop.Excel.Worksheet;
+using Range = Microsoft.Office.Interop.Excel.Range;
 
 namespace ExStudentAddIn
 {
@@ -78,22 +79,27 @@ namespace ExStudentAddIn
 
         private void DrawProjectsMaxCountUI(ApplyProject[] projects)
         {
-            Point referLocation = lblApplyProjectInfoTip.Location;
+            Point referLocation = new Point(lblApplyProjectInfoTip.Location.X, lblApplyProjectInfoTip.Location.Y + lblApplyProjectInfoTip.Height);
             for (int i = 0; i < projects.Length; i++)
             {
                 // 生成label和textbox
                 Label lbl = new Label();
                 lbl.Text = projects[i].Name + ": ";
-                lbl.Location = new Point(referLocation.X, referLocation.Y + 8 + (8 + 15) * i);
+                lbl.Location = new Point(referLocation.X, referLocation.Y + 8);
+                lbl.Width = 200;
+                lbl.Height = 50;
 
                 TextBox txtProject = new TextBox();
                 txtProject.AccessibleName = "ProjectMaxCount";
                 txtProject.Location = new Point(lbl.Location.X + lbl.Size.Width + 5, lbl.Location.Y);
+                txtProject.Height = lbl.Height;
                 txtProject.TextChanged += new EventHandler(txtProject_TextChanged);
                 txtProject.Tag = projects[i];
 
                 panelApplyProjectInfo.Controls.Add(lbl);
                 panelApplyProjectInfo.Controls.Add(txtProject);
+
+                referLocation = new Point(lbl.Location.X, lbl.Location.Y + lbl.Height);
             }
         }
 
@@ -196,8 +202,11 @@ namespace ExStudentAddIn
                 else if (panelResultInfo.Visible)
                 {
                     CaculateResultInfo();
+                    DrawResultInfo();
 
-
+                    btnPrevious.Visible = false;
+                    btnNext.Visible = false;
+                    btnFinish.Visible = true;
                 }
             }
             catch (Exception exception)
@@ -209,6 +218,60 @@ namespace ExStudentAddIn
         private void CaculateResultInfo()
         {
             _sheetInfo.GenerateFilterResult();
+        }
+
+        private void DrawResultInfo()
+        {
+            ExchangeApply[] applies = _sheetInfo.ExchangeApplies;
+            Dictionary<int, string> outputHeadRow = GetOutPutHeadRow();
+            Worksheet resultSheet = Globals.ExcelApp.Sheets.Add();
+            resultSheet.Name = "Result";
+
+            int headRowNumber = _sheetInfo.HeadRow.RowNumber;
+            Range headRow = resultSheet.Rows[headRowNumber];
+            for (int colIndex = 1; colIndex <= outputHeadRow.Count; colIndex++)
+            {
+                Range cell = headRow.Cells[colIndex];
+                cell.Value = outputHeadRow[colIndex];
+            }
+            int contentRow = _sheetInfo.HeadRow.RowNumber + 1;
+            foreach (ExchangeApply apply in applies)
+            {
+                Range row = resultSheet.Rows[contentRow];
+                for (int colIndex = 1; colIndex <= outputHeadRow.Count; colIndex++)
+                {
+                    Range cell = row.Cells[colIndex];
+                    string colName = outputHeadRow[colIndex];
+                    string cellValue = string.Empty;
+                    apply.ApplyInfo.TryGetValue(colName, out cellValue);
+                    if (colName == "Pass")
+                    {
+                        cellValue = apply.Pass.ToString();
+                    }
+                    else if (colName == "Priority")
+                    {
+                        cellValue = apply.Priority.ToString();
+                    }
+                    cell.Value = cellValue;
+                }
+                contentRow++;
+            }
+        }
+
+        private Dictionary<int, string> GetOutPutHeadRow()
+        {
+            Dictionary<int, string> outHeadRow = new Dictionary<int, string>();
+            int passColIndex = 3;
+            int priorityColIndex = 4;
+            outHeadRow[passColIndex] = "Pass";
+            outHeadRow[priorityColIndex] = "Priority";
+            foreach (var headCol in _sheetInfo.HeadRow.HeadColumns)
+            {
+                int colIndex = headCol.Key;
+                colIndex = colIndex >= passColIndex ? colIndex + 2 : colIndex;
+                outHeadRow[colIndex] = headCol.Value;
+            }
+            return outHeadRow;
         }
 
         private void CaculateApplyProjectInfo()

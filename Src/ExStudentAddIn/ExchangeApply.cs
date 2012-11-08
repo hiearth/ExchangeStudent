@@ -6,6 +6,7 @@ namespace ExStudentAddIn
 {
     public class ExchangeApply: IComparable<ExchangeApply>
     {
+        private IDictionary<string, string> _applyInfo;
         private ApplyProject _project;
         private Student _ownerStudnet;
         private int _priority;
@@ -30,6 +31,7 @@ namespace ExStudentAddIn
         {
             _project = project;
             _ownerStudnet = student;
+            _applyInfo = new Dictionary<string, string>();
             ParsePriority();
         }
 
@@ -44,6 +46,11 @@ namespace ExStudentAddIn
                     break;
                 }
             }
+        }
+
+        public void AppendInfo(string infoName, string infoValue)
+        {
+            _applyInfo[infoName] = infoValue;
         }
 
         public int Priority
@@ -74,6 +81,10 @@ namespace ExStudentAddIn
             set { _ownerStudnet = value; }
         }
 
+        public IDictionary<string, string> ApplyInfo
+        {
+            get { return _applyInfo; }
+        }
 
         #region IComparable<ExchangeApply> Members
 

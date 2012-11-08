@@ -121,6 +121,9 @@
             // 
             // panelSheetInfo
             // 
+            this.panelSheetInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panelSheetInfo.Controls.Add(this.txtProjectNameColumn);
             this.panelSheetInfo.Controls.Add(this.lblProjectName);
             this.panelSheetInfo.Controls.Add(this.lblApplySortColumn);
@@ -131,9 +134,9 @@
             this.panelSheetInfo.Controls.Add(this.lblStudentApplyListColumn);
             this.panelSheetInfo.Controls.Add(this.lblStudentIdColumn);
             this.panelSheetInfo.Controls.Add(this.txtStudentIdColumn);
-            this.panelSheetInfo.Location = new System.Drawing.Point(29, 24);
+            this.panelSheetInfo.Location = new System.Drawing.Point(25, 12);
             this.panelSheetInfo.Name = "panelSheetInfo";
-            this.panelSheetInfo.Size = new System.Drawing.Size(410, 298);
+            this.panelSheetInfo.Size = new System.Drawing.Size(450, 320);
             this.panelSheetInfo.TabIndex = 7;
             // 
             // txtProjectNameColumn
@@ -155,10 +158,13 @@
             // 
             // panelApplyProjectInfo
             // 
+            this.panelApplyProjectInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panelApplyProjectInfo.Controls.Add(this.lblApplyProjectInfoTip);
-            this.panelApplyProjectInfo.Location = new System.Drawing.Point(473, 24);
+            this.panelApplyProjectInfo.Location = new System.Drawing.Point(25, 12);
             this.panelApplyProjectInfo.Name = "panelApplyProjectInfo";
-            this.panelApplyProjectInfo.Size = new System.Drawing.Size(362, 298);
+            this.panelApplyProjectInfo.Size = new System.Drawing.Size(450, 320);
             this.panelApplyProjectInfo.TabIndex = 8;
             // 
             // lblApplyProjectInfoTip
@@ -172,10 +178,13 @@
             // 
             // panelResultInfo
             // 
+            this.panelResultInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panelResultInfo.Controls.Add(this.lblResultInfo);
-            this.panelResultInfo.Location = new System.Drawing.Point(29, 357);
+            this.panelResultInfo.Location = new System.Drawing.Point(25, 12);
             this.panelResultInfo.Name = "panelResultInfo";
-            this.panelResultInfo.Size = new System.Drawing.Size(410, 299);
+            this.panelResultInfo.Size = new System.Drawing.Size(450, 320);
             this.panelResultInfo.TabIndex = 9;
             // 
             // lblResultInfo
@@ -189,7 +198,8 @@
             // 
             // btnPrevious
             // 
-            this.btnPrevious.Location = new System.Drawing.Point(523, 473);
+            this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPrevious.Location = new System.Drawing.Point(254, 408);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(75, 23);
             this.btnPrevious.TabIndex = 10;
@@ -199,7 +209,8 @@
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(604, 473);
+            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNext.Location = new System.Drawing.Point(335, 408);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 10;
@@ -209,7 +220,8 @@
             // 
             // btnFinish
             // 
-            this.btnFinish.Location = new System.Drawing.Point(685, 473);
+            this.btnFinish.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFinish.Location = new System.Drawing.Point(416, 408);
             this.btnFinish.Name = "btnFinish";
             this.btnFinish.Size = new System.Drawing.Size(75, 23);
             this.btnFinish.TabIndex = 10;
@@ -222,13 +234,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(873, 697);
+            this.ClientSize = new System.Drawing.Size(572, 480);
+            this.Controls.Add(this.panelSheetInfo);
             this.Controls.Add(this.btnFinish);
             this.Controls.Add(this.btnNext);
             this.Controls.Add(this.btnPrevious);
-            this.Controls.Add(this.panelResultInfo);
             this.Controls.Add(this.panelApplyProjectInfo);
-            this.Controls.Add(this.panelSheetInfo);
+            this.Controls.Add(this.panelResultInfo);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SheetInfoCheck";

@@ -23,7 +23,7 @@ namespace ExStudentAddIn
             for (int colIndex = 1; colIndex <= columnCount; colIndex++)
             {
                 Range cell = headRow.Cells[colIndex];
-                string colName = cell.Text;
+                string colName = SheetHelper.GetCellText(cell);
                 if (string.IsNullOrEmpty(colName) || string.IsNullOrEmpty(colName.Trim()))
                 {
                     colName = SheetHelper.GetColumnName(colIndex);

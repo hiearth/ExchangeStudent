@@ -54,7 +54,18 @@ namespace ExStudentAddIn
 
         public void AppendInfo(string infoName, string infoValue)
         {
-            _studentInfo[infoName] = infoValue;
+            string currentValue = null;
+            if (_studentInfo.TryGetValue(infoName, out currentValue))
+            {
+                if (currentValue != infoValue)
+                {
+                    _studentInfo[infoName] = currentValue + "；" + infoValue;
+                }
+            }
+            else
+            {
+                _studentInfo[infoName] = infoValue;
+            }
         }
 
         public string Id

@@ -44,6 +44,8 @@ namespace ExStudentAddIn
             int approvedCount = 0;
             do
             {
+                // not correct, can not make pass == max
+                someStudentApproved = false;
                 // so complex, should use array, so we can change the group value
                 for (int groupIndex = 0; groupIndex < projectGroups.Count; groupIndex++)
                 {
@@ -51,8 +53,9 @@ namespace ExStudentAddIn
                     var project = group.Key;
                     var applies = group.Value;
                     int remainCount = project.MaxCount - project.PassCount;
-
-                    for (int applyIndex = remainCount - 1; applyIndex >= 0; applyIndex--)
+                    int leftIndex = applies.Count - remainCount;
+                    int rightIndex = applies.Count - 1;
+                    for (int applyIndex = rightIndex; applyIndex >= leftIndex; applyIndex--)
                     {
                         ExchangeApply apply = applies[applyIndex];
                         if (apply.Priority == GetAvailableHighestPriority(studentGroups, apply.OwnerStudnet))
@@ -63,8 +66,8 @@ namespace ExStudentAddIn
                             approvedCount++;
 
                             // update groups, project groups and student groups.
-                            UpdateStudentGroups(studentGroups, apply.OwnerStudnet);
-                            UpdateProjectGroups(projectGroups, apply.OwnerStudnet);
+                            RemoveStudentInGroups(studentGroups, apply.OwnerStudnet);
+                            RemoveApplyInProjectGroups(projectGroups, apply.OwnerStudnet);
                         }
                     }
                     if (someStudentApproved)
@@ -72,11 +75,41 @@ namespace ExStudentAddIn
                         break;
                     }
                 }
+                RemoveProjectAndApplyInGroups(projectGroups,studentGroups);
             }
             while (someStudentApproved);
         }
 
-        private void UpdateStudentGroups(List<KeyValuePair<Student, List<ExchangeApply>>> studentGroups, Student approvedStudent)
+        private void RemoveProjectAndApplyInGroups(List<KeyValuePair<ApplyProject, List<ExchangeApply>>> projectGroups, List<KeyValuePair<Student, List<ExchangeApply>>> studentGroups)
+        {
+            for (int projectIndex = projectGroups.Count - 1; projectIndex >= 0; projectIndex--)
+            {
+                var project = projectGroups[projectIndex].Key;
+                var applies = projectGroups[projectIndex].Value;
+                if (applies.Count == 0 || project.PassCount == project.MaxCount)
+                {
+                    // remove project and it's applies in students
+                    projectGroups.RemoveAt(projectIndex);
+                    for (int applyIndex = applies.Count - 1; applyIndex >= 0; applyIndex--)
+                    {
+                        RemoveApplyInStudentGroups(studentGroups, applies[applyIndex]);
+                    }
+                }
+            }
+        }
+
+        private void RemoveApplyInStudentGroups(List<KeyValuePair<Student, List<ExchangeApply>>> studentGroups,ExchangeApply apply)
+        {
+            for (int i = studentGroups.Count - 1; i >= 0; i--)
+            {
+                if (studentGroups[i].Key == apply.OwnerStudnet)
+                {
+                    studentGroups[i].Value.Remove(apply);
+                }
+            }
+        }
+
+        private void RemoveStudentInGroups(List<KeyValuePair<Student, List<ExchangeApply>>> studentGroups, Student approvedStudent)
         {
             for (int i = studentGroups.Count - 1; i >= 0; i--)
             {
@@ -87,7 +120,7 @@ namespace ExStudentAddIn
             }
         }
 
-        private void UpdateProjectGroups(List<KeyValuePair<ApplyProject, List<ExchangeApply>>> projectGroups, Student approvedStudent)
+        private void RemoveApplyInProjectGroups(List<KeyValuePair<ApplyProject, List<ExchangeApply>>> projectGroups, Student approvedStudent)
         {
             for (int projectIndex = projectGroups.Count - 1; projectIndex >= 0; projectIndex--)
             {
@@ -98,10 +131,6 @@ namespace ExStudentAddIn
                     {
                         applies.RemoveAt(applyIndex);
                     }
-                }
-                if (applies.Count == 0)
-                {
-                    projectGroups.RemoveAt(projectIndex);
                 }
             }
         }
@@ -174,6 +203,7 @@ namespace ExStudentAddIn
                     if (applies[index].Priority < apply.Priority)
                     {
                         applies.Insert(index + 1, apply);
+                        break;
                     }
                 }
                 if (index < 0)
@@ -237,6 +267,7 @@ namespace ExStudentAddIn
                     if (applies[index].CompareTo(apply) >= 0)
                     {
                         applies.Insert(index + 1, apply);
+                        break;
                     }
                 }
                 if (index < 0)
@@ -265,13 +296,20 @@ namespace ExStudentAddIn
             ApplyProject project = ParseProject(row, projNameCol);
             Student student = ParseStudent(row, studentIdCol, applySortCol, studentAppliesCol);
             ExchangeApply apply = new ExchangeApply(project, student);
+            for (int colIndex = 1; colIndex < _columnCount; colIndex++)
+            {
+                Range cell = row.Cells[colIndex];
+                string infoValue = SheetHelper.GetCellText(cell);
+                string infoName = _headRow.GetColumnName(colIndex);
+                apply.AppendInfo(infoName, infoValue);
+            }
             return apply;
         }
 
         private Student ParseStudent(Range row, int studentIdCol, int applySortCol, int studentAppliesCol)
         {
             Range cell = row.Cells[studentIdCol];
-            string studentId = SheetHelper.TrimCellText(cell.Text);
+            string studentId = SheetHelper.GetCellText(cell);
             Student student = TryGetStudent(studentId);
             if (student == null)
             {
@@ -279,7 +317,22 @@ namespace ExStudentAddIn
                 ParseStudentInfo(student, row, applySortCol, studentAppliesCol);
                 _students.Add(student);
             }
+            else
+            {
+                UpdateStudentInfo(student, row, applySortCol, studentAppliesCol);
+            }
             return student;
+        }
+
+        private void UpdateStudentInfo(Student student, Range row, int applySortCol, int studentAppliesCol)
+        {
+            for (int colIndex = 1; colIndex < _columnCount; colIndex++)
+            {
+                Range cell = row.Cells[colIndex];
+                string infoValue = SheetHelper.GetCellText(cell);
+                string infoName = _headRow.GetColumnName(colIndex);
+                student.AppendInfo(infoName, infoValue);
+            }
         }
 
         private void ParseStudentInfo(Student student,Range row, int applySortCol, int studentAppliesCol)
@@ -289,7 +342,7 @@ namespace ExStudentAddIn
             for (int colIndex = 1; colIndex < _columnCount; colIndex++)
             {
                 Range cell = row.Cells[colIndex];
-                string infoValue = SheetHelper.TrimCellText(cell.Text);
+                string infoValue = SheetHelper.GetCellText(cell);
                 string infoName = _headRow.GetColumnName(colIndex);
                 student.AppendInfo(infoName, infoValue);
             }
@@ -310,7 +363,7 @@ namespace ExStudentAddIn
         private ApplyProject ParseProject(Range row, int projNameCol)
         {
             Range cell = row.Cells[projNameCol];
-            string name = SheetHelper.TrimCellText(cell.Text);
+            string name = SheetHelper.GetCellText(cell);
             ApplyProject proj = TryGetProject(name);
             if (proj == null)
             {
