@@ -77,6 +77,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CellInfo.cs" />
     <Compile Include="Connect.cs">
       <SubType>Code</SubType>
     </Compile>

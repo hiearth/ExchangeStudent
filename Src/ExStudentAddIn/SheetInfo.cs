@@ -22,6 +22,8 @@ namespace ExStudentAddIn
             _exchangeApplies = new List<ExchangeApply>();
             _projects = new List<ApplyProject>();
             _students = new List<Student>();
+            _columnCount = _sheet.UsedRange.Columns.Count;
+            _rowCount = _sheet.UsedRange.Rows.Count;
         }
 
         public void GenerateFilterResult()
@@ -279,10 +281,7 @@ namespace ExStudentAddIn
 
         public void ParseSheet(int headRowNO, int projNameCol, int studentIdCol, int applySortCol, int studentAppliesCol)
         {   
-            _columnCount = _sheet.UsedRange.Columns.Count;
-            _rowCount = _sheet.UsedRange.Rows.Count;
             _headRow = new HeadRowInfo(_sheet, headRowNO, _columnCount);
-
             for (int rowIndex = headRowNO + 1; rowIndex <= _rowCount; rowIndex++)
             {
                 ExchangeApply apply = ParseApply(rowIndex, projNameCol, studentIdCol, applySortCol, studentAppliesCol);
@@ -383,6 +382,22 @@ namespace ExStudentAddIn
                 }
             }
             return null;
+        }
+
+        public IList<CellInfo> GetRowCells(int rowNumber)
+        {
+            List<CellInfo> cells = new List<CellInfo>();
+            if (rowNumber > 0)
+            {
+                Range row = _sheet.Rows[rowNumber];
+                for (int colIndex = 1; colIndex <= _columnCount; colIndex++)
+                {
+                    Range cell = row.Cells[colIndex];
+                    string cellValue = cell.get_Value();
+                    cells.Add(new CellInfo(colIndex, cellValue));
+                }
+            }
+            return cells;
         }
 
         public HeadRowInfo HeadRow

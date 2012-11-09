@@ -17,6 +17,7 @@ namespace ExStudentAddIn
         {
             InitializeComponent();
             Init();
+            PrepareData();
         }
 
         private int _sheetColumnCount;
@@ -30,6 +31,31 @@ namespace ExStudentAddIn
             panelResultInfo.Visible = false;
             btnPrevious.Visible = false;
             btnFinish.Visible = false;
+        }
+
+        private void PrepareData()
+        {
+            Worksheet activeSheet = Globals.ExcelApp.ActiveSheet as Worksheet;
+            _sheetInfo = new SheetInfo(activeSheet);
+
+            txtHeadRow.Text = "1";
+            IList<CellInfo> rowCells = _sheetInfo.GetRowCells(1);
+
+            cbProjectNameColumn.DataSource = rowCells.ToArray();
+            cbProjectNameColumn.DisplayMember = "Value";
+            cbProjectNameColumn.ValueMember = "ColIndex";
+
+            cbStudentIdColumn.DataSource = rowCells.ToArray();
+            cbStudentIdColumn.DisplayMember = "Value";
+            cbStudentIdColumn.ValueMember = "ColIndex";
+
+            cbApplySortColumn.DataSource = rowCells.ToArray();
+            cbApplySortColumn.DisplayMember = "Value";
+            cbApplySortColumn.ValueMember = "ColIndex";
+
+            cbStudentApplyListColumn.DataSource = rowCells.ToArray();
+            cbStudentApplyListColumn.DisplayMember = "Value";
+            cbStudentApplyListColumn.ValueMember = "ColIndex";
         }
 
         public ExchangeApply[] ExchangeApplies
@@ -86,8 +112,8 @@ namespace ExStudentAddIn
                 Label lbl = new Label();
                 lbl.Text = projects[i].Name + ": ";
                 lbl.Location = new Point(referLocation.X, referLocation.Y + 8);
-                lbl.Width = 200;
-                lbl.Height = 50;
+                lbl.Width = 400;
+                lbl.Height = 30;
 
                 TextBox txtProject = new TextBox();
                 txtProject.AccessibleName = "ProjectMaxCount";
@@ -149,31 +175,6 @@ namespace ExStudentAddIn
         private void ShowMessage(string msg)
         {
             MessageBox.Show(msg);
-        }
-
-        private void txtStudentIdColumn_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private bool columnCheck()
-        {
-            return false;
-        }
-
-        private void txtApplySortColumn_TextChanged(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void txtStudentApplyListColumn_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtProjectNameColumn_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void btnNext_Click(object sender, EventArgs e)
@@ -295,14 +296,25 @@ namespace ExStudentAddIn
 
         private void CaculateSheetInfo()
         {
-            Worksheet activeSheet = Globals.ExcelApp.ActiveSheet as Worksheet;
-            _sheetInfo = new SheetInfo(activeSheet);
             int headRow = int.Parse(txtHeadRow.Text);
-            int projNameCol = SheetHelper.GetColumnNumber(txtProjectNameColumn.Text);
-            int studentIdCol = SheetHelper.GetColumnNumber(txtStudentIdColumn.Text);
-            int applySortCol = SheetHelper.GetColumnNumber(txtApplySortColumn.Text);
-            int studentAppliesCol = SheetHelper.GetColumnNumber(txtStudentApplyListColumn.Text);
+            int projNameCol = int.Parse(cbProjectNameColumn.SelectedValue.ToString());
+            int studentIdCol = int.Parse(cbStudentIdColumn.SelectedValue.ToString());
+            int applySortCol = int.Parse(cbApplySortColumn.SelectedValue.ToString());
+            int studentAppliesCol = int.Parse(cbStudentApplyListColumn.SelectedValue.ToString());
             _sheetInfo.ParseSheet(headRow, projNameCol, studentIdCol, applySortCol, studentAppliesCol);
+        }
+
+        private IList<CellInfo> GetHeadCells(int headRowNumber)
+        {
+            return _sheetInfo.GetRowCells(headRowNumber);
+            //ComboBox cbNames = new ComboBox();
+            //foreach(var cell in rowValues)
+            //{
+            //    CellInfo cellInfo = new CellInfo(cell.Key, cell.Value);
+            //    cells.Add(cellInfo);
+            //}
+            //cbNames.ValueMember = "Index";
+            //cbNames.DisplayMember = "Name";
         }
 
         private void btnPrevious_Click(object sender, EventArgs e)
@@ -323,7 +335,7 @@ namespace ExStudentAddIn
 
         private void btnFinish_Click(object sender, EventArgs e)
         {
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
         }
     }
 }
